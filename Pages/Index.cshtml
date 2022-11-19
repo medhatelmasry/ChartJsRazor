@@ -1,0 +1,146 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Chart.js";
+}
+
+<div class="text-center">
+    <h4 class="display-4">Students by school</h4>
+        <div class="card">
+            <div class="card-header">Vertical Bar Chart</div>
+            <div class="chart-container">
+                <canvas id="bar-chart" width="100" height="300"></canvas>
+            </div>     
+            <div class="card-header">Horizontal bar chart</div>
+            <div class="chart-container">
+                <canvas id="horizontal-bar-chart" width="100" height="300"></canvas>
+            </div>
+            <div class="card-header">Pie chart</div>
+            <div class="chart-container">
+                <canvas id="pie-chart" width="100" height="300"></canvas>
+            </div>  
+            <div class="card-header">Doughnut chart</div>
+            <div class="chart-container">
+                <canvas id="doughnut-chart" width="100" height="300"></canvas>
+            </div>  
+            <div class="card-header">Polar area chart</div>
+            <div class="chart-container">
+                <canvas id="polar-area-chart" width="100" height="300"></canvas>
+            </div> 
+        </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+@* <script src="lib/chartjs/chart.min.js"></script> *@
+
+<script>
+
+    var Count = [];
+    var Schools = [];
+
+    @if (Model.ChartData.Count > 0)
+    {
+        foreach (var item in Model.ChartData)
+        {
+            @:Count.push(@item.Count);
+            @:Schools.push('@item.Name');
+        }
+    }
+    
+    var School = {
+        label: "School",
+        data: Count,
+        backgroundColor: [
+            'rgba(255, 99, 132, 0.2)',
+            'rgba(54, 162, 235, 0.2)',
+            'rgba(255, 206, 86, 0.2)',
+            'rgba(75, 192, 192, 0.2)',
+            'rgba(153, 102, 255, 0.2)',
+            'rgba(255, 159, 64, 0.2)'
+        ],
+        borderColor: [
+            'rgba(255, 99, 132, 1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 1)',
+            'rgba(75, 192, 192, 1)',
+            'rgba(153, 102, 255, 1)',
+            'rgba(255, 159, 64, 1)'
+        ],        
+        borderWidth: 1,
+        lineTension: 0,
+    };
+
+    var datasetvalues = {
+        labels: Schools, // x-azis label values
+        datasets: [School] // y-axis
+    };
+
+    barChartOptions = {
+        indexAxis: 'x',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            title: {
+                display: true,
+                text: 'Students by school'
+            }
+        },
+        scales: {
+            x: {
+                barPercentage: 1,
+                categoryPercentage: 0.6,
+            },
+            y: {
+                barPercentage: 1,
+                categoryPercentage: 0.6,
+                ticks: {
+                    beginAtZero: true
+                }
+            }
+        }
+    }
+
+    var verticalBarChart = new Chart(
+        document.getElementById('bar-chart').getContext('2d'), {
+        type: 'bar',
+        data: datasetvalues,
+        options: barChartOptions
+    });
+
+    horizonntalBarChartOptions = barChartOptions;
+    horizonntalBarChartOptions['indexAxis'] = 'y' ;
+    delete horizonntalBarChartOptions.scales;
+    console.log(barChartOptions);
+    var horizonntalBarChart = new Chart(
+        document.getElementById('horizontal-bar-chart').getContext('2d'), {
+        type: 'bar',
+        data: datasetvalues,
+        options: horizonntalBarChartOptions
+    });
+
+    pieChartOptions = barChartOptions;
+    delete pieChartOptions.indexAxis;
+    delete pieChartOptions.scales;
+
+    var pieChart = new Chart(
+        document.getElementById('pie-chart').getContext('2d'), {
+        type: 'pie',
+        data: datasetvalues,
+        options: pieChartOptions
+    });
+
+    var doughnutChart = new Chart(
+        document.getElementById('doughnut-chart').getContext('2d'), {
+            type: 'doughnut',
+            data: datasetvalues,
+            options: pieChartOptions
+    });    
+
+    var polarAreaChart = new Chart(
+        document.getElementById('polar-area-chart').getContext('2d'), {
+        type: 'polarArea',
+        data: datasetvalues,
+        options: pieChartOptions
+    });
+</script>
+
